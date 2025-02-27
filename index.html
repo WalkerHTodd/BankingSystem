@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        async function createAccount() {
+            let id = document.getElementById("newId").value;
+            let name = document.getElementById("name").value;
+            let deposit = document.getElementById("deposit").value;
+
+            let response = await fetch("http://127.0.0.1:18080/create", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ id: parseInt(id), name: name, initial_deposit: parseFloat(deposit) })
+            });
+
+            let data = await response.json();
+            document.getElementById("message").innerText = data.status || data.error;
+        }
+
+        async function checkBalance() {
+            let id = document.getElementById("accId").value;
+            let response = await fetch(`http://127.0.0.1:18080/balance?id=${id}`);
+            let data = await response.json();
+            document.getElementById("result").innerText = data.error ? data.error : `Name: ${data.name}, Balance: $${data.balance}`;
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Banking System</h1>
+
+        <div class="section">
+            <h2>Create Account</h2>
+            <input type="text" id="newId" placeholder="Account ID">
+            <input type="text" id="name" placeholder="Name">
+            <input type="number" id="deposit" placeholder="Initial Deposit">
+            <button onclick="createAccount()">Create Account</button>
+            <p id="message"></p>
+        </div>
+
+        <div class="section">
+            <h2>Check Balance</h2>
+            <input type="text" id="accId" placeholder="Account ID">
+            <button onclick="checkBalance()">Check Balance</button>
+            <p id="result"></p>
+        </div>
+    </div>
+</body>
+</html>
